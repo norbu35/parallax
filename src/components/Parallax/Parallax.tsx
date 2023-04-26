@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import Rectangle from "../../classes/Rectangle";
 import { DrawableElementProp } from "../../types/DrawableElement";
-import { getCirclePos } from "../../utils/Circle";
+import { getPos } from "../../utils/Path";
 import "./styles.css";
 
 interface ParallaxProps {
@@ -35,12 +35,11 @@ export default function Parallax({
 
       setElements((prevElements) =>
         prevElements.map((el) => {
-          const { newX } = getCirclePos(el);
           return {
             ...el,
             pos: {
+              x: getPos(el).x,
               y: el.initialPos.y - scrollTop * el.vel,
-              x: newX,
             },
           };
         })
@@ -50,11 +49,11 @@ export default function Parallax({
     elementRefs.current.forEach((elementRef, idx) => {
       if (elementRef) {
         const { pos } = elements[idx];
-        const { rotDeg } = getCirclePos(elements[idx]);
+        const { angleDeg } = getPos(elements[idx]);
         elementRef.style.transform = `
             translateX(${pos.x}px)
             translateY(${pos.y}px)
-            rotate(${rotDeg}deg),
+            rotate(${angleDeg}deg),
       `;
       }
     });
@@ -66,19 +65,19 @@ export default function Parallax({
 
   return (
     <>
-      {elements.map((el: DrawableElement, idx) => {
-        const { rotDeg } = getCirclePos(el);
+      {elements.map((el: Rectangle, idx) => {
+        const { angleDeg } = getPos(el);
         return (
           <div
             ref={(ref) => (elementRefs.current[idx] = ref)}
             style={{
-              width: el.size,
-              height: el.size,
+              width: el.width,
+              height: el.height,
               backgroundImage: `url(${el.imgUrl})`,
               transform: `
                         translateX(${el.pos.x}px)
                         translateY(${el.pos.y}px)
-                        rotate(${rotDeg}deg)`,
+                        rotate(${angleDeg}deg)`,
             }}
             key={idx}
           />
