@@ -8,8 +8,8 @@ export interface Coordinates {
 // two possible midpoints for the object to circle
 const MIDPOINT_LEFT = 0 - window.innerWidth / 2;
 const MIDPOINT_RIGHT = window.innerWidth * 1.5;
-const MIDPOINT_Y = window.innerHeight / 2;
-// center between the two possible midpoitns
+const MIDPOINT_Y = document.documentElement.scrollHeight / 2;
+// the center between the two possible midpoitns
 const CENTER = window.innerWidth / 2;
 
 export default class Rectangle {
@@ -35,7 +35,7 @@ export default class Rectangle {
       y: initialPos.y + this.height / 2,
     };
     this.pos = initialPos;
-    // define which midpoint the object will circle
+    // define which midpoint the object will circle based on which side of the screen it is
     this.midpoint = {
       x: this.initialPos.x < CENTER ? MIDPOINT_LEFT : MIDPOINT_RIGHT,
       y: MIDPOINT_Y,
