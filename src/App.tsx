@@ -1,5 +1,5 @@
 import Parallax from "./components/Parallax/Parallax";
-import { DrawableElementProp } from "./types/DrawableElement";
+import { DrawableElementProp } from "./types/PropTypes";
 
 function App() {
   const elementsArr: DrawableElementProp[] = [
@@ -26,6 +26,18 @@ function App() {
       imgUrl:
         "https://images.pexels.com/photos/2911521/pexels-photo-2911521.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       vel: 1.5,
+    },
+    {
+      size: 400,
+      imgUrl:
+        "https://images.pexels.com/photos/2911521/pexels-photo-2911521.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      vel: 1.1,
+    },
+    {
+      size: 75,
+      imgUrl:
+        "https://images.pexels.com/photos/2911521/pexels-photo-2911521.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      vel: 20,
     },
     {
       size: 400,

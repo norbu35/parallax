@@ -1,13 +1,13 @@
-import { DrawableElementProp } from "../types/DrawableElement";
+import { DrawableElementProp } from "../types/PropTypes";
 
-interface Coordinates {
+export interface Coordinates {
   x: number;
   y: number;
 }
 
-const MIDPOINT_LEFT = 0 - window.innerWidth / 4;
-const MIDPOINT_RIGHT = window.innerWidth * 1.75;
-const MIDPOINT_Y = document.documentElement.scrollHeight / 2;
+const MIDPOINT_LEFT = 0 - window.innerWidth / 2;
+const MIDPOINT_RIGHT = window.innerWidth * 1.5;
+const MIDPOINT_Y = window.innerHeight / 2;
 const CENTER = window.innerWidth / 2;
 
 export default class Rectangle {

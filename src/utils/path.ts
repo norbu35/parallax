@@ -1,8 +1,8 @@
 import Rectangle from "../classes/Rectangle";
 
-export function getPos(el: Rectangle) {
+export default function getPathState(el: Rectangle) {
   // angle(radians) between x-axis and (pos.x, pos.y)
-  const angle = Math.atan2(el.pos.y - el.midpoint.y, el.pos.x - el.midpoint.x);
+  let angle = Math.atan2(el.pos.y - el.midpoint.y, el.pos.x - el.midpoint.x);
   // radius (pos.x, pos.y), (midpoint.x, midpoint.y)
   const radius = Math.sqrt(
     (el.initialPos.x - el.midpoint.x) ** 2 +
