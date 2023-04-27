@@ -5,9 +5,11 @@ export interface Coordinates {
   y: number;
 }
 
+// two possible midpoints for the object to circle
 const MIDPOINT_LEFT = 0 - window.innerWidth / 2;
 const MIDPOINT_RIGHT = window.innerWidth * 1.5;
 const MIDPOINT_Y = window.innerHeight / 2;
+// center between the two possible midpoitns
 const CENTER = window.innerWidth / 2;
 
 export default class Rectangle {
@@ -33,6 +35,7 @@ export default class Rectangle {
       y: initialPos.y + this.height / 2,
     };
     this.pos = initialPos;
+    // define which midpoint the object will circle
     this.midpoint = {
       x: this.initialPos.x < CENTER ? MIDPOINT_LEFT : MIDPOINT_RIGHT,
       y: MIDPOINT_Y,

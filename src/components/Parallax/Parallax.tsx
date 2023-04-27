@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, ReactElement } from "react";
 import { DrawableElementProp } from "../../types/PropTypes";
 
 import Rectangle from "../../classes/Rectangle";
+import Element from "./Element";
 
 import getInitialPos from "../../utils/getInitialPos";
 import getPathState from "../../utils/path";
@@ -13,8 +14,9 @@ interface ParallaxProps {
   elementsArr: DrawableElementProp[];
 }
 
-export default function Parallax({ elementsArr }: ParallaxProps) {
-  let scale = innerWidth / 1000;
+export default function Parallax({ elementsArr }: ParallaxProps): ReactElement {
+  let scale = (window.innerWidth + 200) / 1600;
+  console.log(scale);
 
   const [elements, setElements] = useState<Rectangle[]>(
     elementsArr.map((el) => {
@@ -22,7 +24,6 @@ export default function Parallax({ elementsArr }: ParallaxProps) {
       return new Rectangle(el, initialPos, scale);
     })
   );
-
   type ElementRef = HTMLDivElement | null;
   const elementRefs = useRef<ElementRef[]>([]);
 
@@ -51,32 +52,17 @@ export default function Parallax({ elementsArr }: ParallaxProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [window.pageYOffset]);
 
-  useEffect(() => {
-    elementRefs.current.forEach((elementRef, idx) => {
-      if (elementRef) {
-        transformElement(elementRef, elements[idx]);
-      }
-    });
-  });
-
   return (
     <>
       {elements.map((el: Rectangle, idx) => {
-        const element = (
-          <div
-            ref={(ref) => {
-              elementRefs.current[idx] = ref;
-            }}
-            style={{
-              width: el.width,
-              height: el.height,
-              backgroundImage: `url(${el.imgUrl})`,
-            }}
-            key={el.pos.x}
+        return (
+          <Element
+            elementRefs={elementRefs}
+            idx={idx}
+            elementObject={el}
+            key={el.pos.x / el.pos.y}
           />
         );
-        transformElement(elementRefs.current[idx], el);
-        return element;
       })}
     </>
   );

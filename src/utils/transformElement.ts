@@ -5,12 +5,12 @@ export default function transformElement(
   elementRef: HTMLDivElement | null,
   element: Rectangle
 ): void {
-  if (element && elementRef) {
-    const { x, angleDeg } = getPathState(element);
+  if (elementRef) {
+    const { x, angle } = getPathState(element);
     elementRef.style.transform = `
       translateX(${x}px)
       translateY(${element.pos.y}px)
-      rotate(${angleDeg}deg)
+      rotate(${angle}deg)
     `;
   }
 }
