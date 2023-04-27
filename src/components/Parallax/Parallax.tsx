@@ -50,9 +50,8 @@ export default function Parallax({ elementsArr }: Props): ReactElement {
               );
             }
           },
-          { threshold: 0.5 }
+          { threshold: 0.4 }
         );
-
         observer.observe(elementRef);
       });
     };
