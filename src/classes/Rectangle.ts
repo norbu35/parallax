@@ -8,7 +8,6 @@ export interface Coordinates {
 // two possible midpoints for the object to circle
 const MIDPOINT_LEFT = 0 - window.innerWidth / 2;
 const MIDPOINT_RIGHT = window.innerWidth * 1.5;
-const MIDPOINT_Y = document.documentElement.scrollHeight / 2;
 // the center between the two possible midpoitns
 const CENTER = window.innerWidth / 2;
 
@@ -20,12 +19,15 @@ export default class Rectangle {
   initialPos: Coordinates;
   pos: Coordinates;
   midpoint: Coordinates;
+  MIDPOINT_Y: number;
 
   constructor(
+    id: number,
     prop: DrawableElementProp,
     initialPos: Coordinates,
     scale: number
   ) {
+    this.MIDPOINT_Y = window.innerHeight / 2 + (id - 1) * window.innerHeight;
     this.width = prop.size * scale;
     this.height = prop.size * scale;
     this.imgUrl = prop.imgUrl;
@@ -38,7 +40,7 @@ export default class Rectangle {
     // define which midpoint the object will circle based on which side of the screen it is
     this.midpoint = {
       x: this.initialPos.x < CENTER ? MIDPOINT_LEFT : MIDPOINT_RIGHT,
-      y: MIDPOINT_Y,
+      y: this.MIDPOINT_Y,
     };
   }
 }

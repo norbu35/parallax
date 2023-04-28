@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, ReactElement } from "react";
+import { useRef, useEffect } from "react";
 import { DrawableElementProp } from "../../types/PropTypes";
 
 import Rectangle from "../../classes/Rectangle";
@@ -12,19 +12,21 @@ import "./styles.css";
 
 interface Props {
   elementsArr: DrawableElementProp[];
+  id: number;
 }
 
-export default function Parallax({ elementsArr }: Props): ReactElement {
-  let scale = (window.innerWidth + 200) / 1600;
+export default function Parallax({ elementsArr, id }: Props) {
+  const initialWidth = window.innerWidth;
+  const initialHeight = window.innerHeight;
+  const scale = (window.innerWidth + 200) / 1600;
 
-  const [elements, setElements] = useState<Rectangle[]>(
-    elementsArr.map((el) => {
-      const initialPos = getInitialPos();
-      return new Rectangle(el, initialPos, scale);
-    })
-  );
-  type ElementRef = HTMLDivElement | null;
-  const elementRefs = useRef<ElementRef[]>([]);
+  const elements: Rectangle[] = [];
+  for (let i = 0; i < elementsArr.length; i++) {
+    const initialPos = getInitialPos(id, i, elementsArr.length);
+    elements.push(new Rectangle(id, elementsArr[i], initialPos, scale));
+  }
+
+  const elementRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,65 +34,38 @@ export default function Parallax({ elementsArr }: Props): ReactElement {
         const element = elements[idx];
         if (!elementRef) return;
 
-        const observer = new IntersectionObserver(
-          ([entry]) => {
-            if (entry.isIntersecting) {
-              const scrollTop =
-                window.pageYOffset || document.documentElement.scrollTop;
-              const newPos = {
-                x: getPathState(element).x,
-                y: element.initialPos.y - scrollTop * element.vel,
-              };
-              setElements((prevElements) =>
-                prevElements.map((prevElement, prevIdx) =>
-                  prevIdx === idx
-                    ? { ...prevElement, pos: newPos }
-                    : prevElement
-                )
-              );
-            }
-          },
-          { threshold: 0.4 }
-        );
-        observer.observe(elementRef);
+        // const scrollTop =
+        //   window.pageYOffset || document.documentElement.scrollTop;
+        // const newPos = {
+        //   x: getPathState(element).x,
+        //   y: element.initialPos.y - scrollTop * element.vel,
+        // };
+        // element.pos = newPos;
+        transformElement(elementRef, element);
       });
     };
 
-    elementRefs.current.forEach((elementRef, idx) => {
-      if (elementRef) transformElement(elementRef, elements[idx]);
-    });
-
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [window.pageYOffset]);
+  }, []);
 
   useEffect(() => {
-    const initialWidth = window.innerWidth;
-    const initialHeight = window.innerHeight;
-
     const handleResize = () => {
       const widthDiff = initialWidth - window.innerWidth;
       const heightDiff = initialHeight - window.innerHeight;
-      setElements((prevElements) =>
-        prevElements.map((el) => {
-          return {
-            ...el,
-            pos: {
-              x: el.pos.x - widthDiff,
-              y: el.pos.y - heightDiff,
-            },
-          };
-        })
-      );
+      elements.forEach((el) => {
+        el.pos = {
+          x: el.pos.x - widthDiff,
+          y: el.pos.y - heightDiff,
+        };
+      });
+      elementRefs.current.forEach((elementRef, idx) => {
+        if (elementRef) transformElement(elementRef, elements[idx]);
+      });
     };
-
-    elementRefs.current.forEach((elementRef, idx) => {
-      if (elementRef) transformElement(elementRef, elements[idx]);
-    });
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [window.innerWidth, window.innerHeight]);
+  }, []);
 
   return (
     <>
@@ -100,7 +75,7 @@ export default function Parallax({ elementsArr }: Props): ReactElement {
             elementRefs={elementRefs}
             idx={idx}
             elementObject={el}
-            key={el.pos.x / el.pos.y}
+            key={idx}
           />
         );
       })}
