@@ -1,34 +1,26 @@
-import { Coordinates } from "../classes/Rectangle";
+import Rectangle from "../classes/Rectangle";
 
-// two possible midpoints for the object to circle
-const MIDPOINT_LEFT = {
-  x: 0 - window.innerWidth / 4,
-  y: window.innerHeight / 2,
-};
-const MIDPOINT_RIGHT = {
-  x: window.innerWidth * 1.25,
-  y: window.innerHeight / 2,
-};
+export default function getPathState(el: Rectangle) {
+  // angle(radians) between x-axis and (pos.x, pos.y)
+  let radians = Math.atan2(el.pos.y - el.midpoint.y, el.pos.x - el.midpoint.x);
 
-function getInitialPos(id: number, idx: number, total: number): Coordinates {
-  const angle = (idx / total) * Math.PI * 2;
-  const radius = window.innerHeight / 4;
+  // radius (pos.x, pos.y), (midpoint.x, midpoint.y)
+  const radius = Math.sqrt(
+    (el.initialPos.x - el.midpoint.x) ** 2 +
+      (el.initialPos.y - el.midpoint.y) ** 2
+  );
+  // angle(degrees) between x-axis and (pos.x, pos.y)
+  const angle = (radians * 180) / Math.PI;
 
-  // divide the elements into left and right groups
-  const side = idx < total / 2 ? "left" : "right";
-
-  let x, y;
-  if (side === "left") {
-    // distribute the left group around the left midpoint
-    x = MIDPOINT_LEFT.x + radius * Math.sin(angle);
-  } else {
-    // distribute the right group around the right midpoint
-    x = MIDPOINT_RIGHT.x + radius * Math.sin(angle);
+  // set maximum allowed angle
+  const maxAngle = 160;
+  if (Math.abs(angle) > maxAngle) {
+    const sign = Math.sign(angle);
+    radians = sign * ((maxAngle * Math.PI) / 180);
   }
-  y =
-    MIDPOINT_LEFT.y + radius * Math.sin(angle) + (id - 1) * window.innerHeight;
 
-  return { x, y };
+  // pos.x on circumference
+  const x = el.midpoint.x + radius * Math.cos(radians);
+
+  return { x, angle };
 }
-
-export default getInitialPos;

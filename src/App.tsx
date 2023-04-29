@@ -4,7 +4,7 @@ import { elementsArr } from "./data/elementsArray";
 const NUMBER_COMPONENTS = 3;
 
 function App() {
-  const parallaxComponents = [];
+  const parallaxComponents: JSX.Element[] = [];
 
   for (let i = 1; i <= NUMBER_COMPONENTS; i++) {
     parallaxComponents.push(

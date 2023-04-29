@@ -27,6 +27,7 @@ export default class Rectangle {
     initialPos: Coordinates,
     scale: number
   ) {
+    // Y-midpoint depends on which component it is
     this.MIDPOINT_Y = window.innerHeight / 2 + (id - 1) * window.innerHeight;
     this.width = prop.size * scale;
     this.height = prop.size * scale;

@@ -20,11 +20,10 @@ export default function Parallax({ elementsArr, id }: Props) {
   const initialHeight = window.innerHeight;
   const scale = (window.innerWidth + 200) / 1600;
 
-  const elements: Rectangle[] = [];
-  for (let i = 0; i < elementsArr.length; i++) {
-    const initialPos = getInitialPos(id, i, elementsArr.length);
-    elements.push(new Rectangle(id, elementsArr[i], initialPos, scale));
-  }
+  const elements: Rectangle[] = elementsArr.map((el, idx) => {
+    const initialPos = getInitialPos(id, idx, elementsArr.length);
+    return new Rectangle(id, el, initialPos, scale);
+  });
 
   const elementRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -34,13 +33,13 @@ export default function Parallax({ elementsArr, id }: Props) {
         const element = elements[idx];
         if (!elementRef) return;
 
-        // const scrollTop =
-        //   window.pageYOffset || document.documentElement.scrollTop;
-        // const newPos = {
-        //   x: getPathState(element).x,
-        //   y: element.initialPos.y - scrollTop * element.vel,
-        // };
-        // element.pos = newPos;
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const newPos = {
+          x: getPathState(element).x,
+          y: element.initialPos.y - scrollTop * element.vel,
+        };
+        element.pos = newPos;
         transformElement(elementRef, element);
       });
     };
