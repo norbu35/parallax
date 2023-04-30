@@ -4,50 +4,64 @@ import { DrawableElementProp } from "../../types/PropTypes";
 import Rectangle from "../../classes/Rectangle";
 import Element from "./Element";
 
-import getInitialPos from "../../utils/getInitialPos";
-import getPathState from "../../utils/path";
-import transformElement from "../../utils/transformElement";
-
-import "./styles.css";
+import drawElement from "../../utils/drawElement";
 
 interface Props {
   elementsArr: DrawableElementProp[];
-  id: number;
+  id?: number;
 }
 
-export default function Parallax({ elementsArr, id }: Props) {
-  const initialWidth = window.innerWidth;
-  const initialHeight = window.innerHeight;
-  const scale = (window.innerWidth + 200) / 1600;
-
+export default function Parallax({ elementsArr }: Props) {
   const elements: Rectangle[] = elementsArr.map((el, idx) => {
-    const initialPos = getInitialPos(id, idx, elementsArr.length);
-    return new Rectangle(id, el, initialPos, scale);
+    return new Rectangle(el, idx, elementsArr.length, 1);
   });
 
   const elementRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      elementRefs.current.forEach((elementRef, idx) => {
-        const element = elements[idx];
-        if (!elementRef) return;
-
-        const scrollTop =
-          window.pageYOffset || document.documentElement.scrollTop;
-        const newPos = {
-          x: getPathState(element).x,
-          y: element.initialPos.y - scrollTop * element.vel,
-        };
-        element.pos = newPos;
-        transformElement(elementRef, element);
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        elementRefs.current.forEach((elementRef, idx) => {
+          if (!elementRef) return;
+          if (entry.isIntersecting) {
+            if (entry.target === elementRef) {
+              const element = elements[idx];
+              element.isVisible = true;
+            }
+          } else {
+            if (entry.target === elementRef) {
+              const element = elements[idx];
+              element.isVisible = false;
+            }
+          }
+        });
       });
-    };
+    },
+    { threshold: 0.5 }
+  );
 
+  const handleScroll = () => {
+    elementRefs.current.forEach((elementRef, idx) => {
+      const element = elements[idx];
+      const scrollTop =
+        window.pageYOffset || document.documentElement.scrollTop;
+      element.scroll(scrollTop);
+      drawElement(elementRef, element);
+    });
+  };
+
+  useEffect(() => {
+    elementRefs.current.forEach((elementRef) => {
+      if (!elementRef) return;
+      observer.observe(elementRef);
+    });
     window.addEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
+    const initialWidth = window.innerHeight;
+    const initialHeight = window.innerWidth;
+
     const handleResize = () => {
       const widthDiff = initialWidth - window.innerWidth;
       const heightDiff = initialHeight - window.innerHeight;
@@ -58,7 +72,7 @@ export default function Parallax({ elementsArr, id }: Props) {
         };
       });
       elementRefs.current.forEach((elementRef, idx) => {
-        if (elementRef) transformElement(elementRef, elements[idx]);
+        if (elementRef) drawElement(elementRef, elements[idx]);
       });
     };
 

@@ -6,7 +6,7 @@ const NUMBER_COMPONENTS = 3;
 function App() {
   const parallaxComponents: JSX.Element[] = [];
 
-  for (let i = 1; i <= NUMBER_COMPONENTS; i++) {
+  for (let i = 0; i < NUMBER_COMPONENTS; i++) {
     parallaxComponents.push(
       <Parallax elementsArr={elementsArr} id={i} key={i} />
     );
